@@ -6,54 +6,55 @@
 //
 
 import SwiftUI
-import VCore
 
 // MARK: - MovieDetails View
 struct MovieDetailsView: View {
     // MARK: Properties
-    @StateObject private var viewModel: MovieDetailsViewModel
+    private var movie: Movie = .mock
 
     private typealias UIModel = MovieDetailsUIModel
-    private typealias LocStrings = MovieDetailsLocalizedStrings
 
-    @Environment(\.navigationStackCoordinatorOO) private var navigationStackCoordinator: NavigationStackCoordinatorOO!
-
-    @State private var didAppearForTheFirstTime: Bool = false
+    @Environment(\.navigationStackCoordinator) private var navigationStackCoordinator: NavigationStackCoordinator!
     
     // MARK: Initializers
     init(parameters: MovieDetailsParameters) {
-        self._viewModel = StateObject(wrappedValue: MovieDetailsViewModel(parameters: parameters))
+        self.movie = parameters.movie
     }
     
     // MARK: Body
     var body: some View {
         ZStack(content: {
-            backgroundView
             contentView
         })
-        .onFirstAppear($didAppearForTheFirstTime, perform: {
-            viewModel.navigationStackCoordinator = navigationStackCoordinator
-        })
-
-        .inlineNavigationTitle("???")
-
-        .alert(parameters: $viewModel.alertParameters)
-        .progressView(parameters: viewModel.progressViewParameters)
-    }
-    
-    private var backgroundView: some View {
-        UIModel.backgroundColor.ignoresSafeArea()
+        .navigationTitle(movie.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     private var contentView: some View {
-        EmptyView()
+        VStack(alignment: .center, spacing: UIModel.contentViewSpacing) {
+            Spacer().frame(height: UIModel.contentViewMarginVertical)
+            
+            Text(movie.title)
+            
+            Text(movie.year)
+            
+            Text(movie.genre)
+            
+            Text(movie.description)
+            
+            Spacer().frame(height: UIModel.contentViewMarginVertical)
+        }
+        .frame(maxWidth: .infinity)
+        .background(Color.red)
+        .clipShape(.rect(cornerRadius: UIModel.contentViewCornerRadius))
+        .padding(.horizontal, UIModel.contentViewMarginHorizontal)
     }
 }
 
 // MARK: - Preview
 struct MovieDetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        CoordinatingNavigationStackOO(root: {
+        CoordinatingNavigationStack(root: {
             MovieDetailsView(parameters: .mock)
         })
     }

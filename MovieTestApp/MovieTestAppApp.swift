@@ -11,7 +11,9 @@ import SwiftUI
 struct MovieTestAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CoordinatingNavigationStack(root: {
+                MovieListView(viewModel: .init())
+            })
         }
     }
 }
